@@ -18,7 +18,10 @@ public class Basic extends LinearOpMode {
     private DcMotor rfDrive;
     private DcMotor rbDrive;
     ///
-    private DcMotor turnBaseplate;
+    private DcMotor baseplate;
+    private DcMotor hinge1;
+    private DcMotor hinge2;
+    private DcMotor claw;
     ///
 
     @Override
