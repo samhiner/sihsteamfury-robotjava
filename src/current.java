@@ -49,6 +49,7 @@ public class current extends LinearOpMode {
         rfDrive.setDirection(DcMotor.Direction.REVERSE);
         rbDrive.setDirection(DcMotor.Direction.REVERSE);
         
+        
         /* Vars for A01.*/
         
         int numAClicks = 0;
@@ -58,6 +59,8 @@ public class current extends LinearOpMode {
         int numBClicks = 0;
         int cont1Status = 0;
         int countdown_b = 0;
+        
+        boolean bClickedState = false;
         
         //TODO right stick is f/w to move robot forward and back. left stick is left and right to turn left and right
 
@@ -106,16 +109,13 @@ public class current extends LinearOpMode {
                 
                 telemetry.addData("Status", "WWW");
                 
-                fixedServo.setPosition(-1);
-                
-                
-                /*if (hinge1Status == 0) {
+                if (hinge1Status == 0) {
                     fixedServo.setPosition(0);
                 } else if (hinge1Status == 1) {
                     fixedServo.setPosition(0.5);
                 } else if (hinge1Status == 2) {
                     fixedServo.setPosition(1);
-                }*/
+                }
                 
                 countdown_a = 5;
             }
@@ -124,8 +124,12 @@ public class current extends LinearOpMode {
                 countdown_a -= 1;
             }
 
+            if (gamepad2.b) {
+                bClickedState = true;
+            }
             
-            if (gamepad2.b && countdown_b == 0) {
+            if (!gamepad2.b && bClickedState) {
+                bClickedState = false;
                 
                 numBClicks += 1;
                 
@@ -133,54 +137,51 @@ public class current extends LinearOpMode {
                     numBClicks = 0;
                 }
                 
-                cont1Status = numBClicks % 3;
+                cont1Status = numBClicks % 4;
 
                 if (cont1Status == 0) {
-                    contServo.setPower(0.7);
+                    contServo.setPower(0);
                 } else if (cont1Status == 1) {
-                    contServo.setPower(0.7);
+                    contServo.setPower(1);
                 } else if (cont1Status == 2) {
-                    contServo.setPower(0.7);
+                    contServo.setPower(0);
                 } else if (cont1Status == 3) {
-                    contServo.setPower(0.7);
+                    contServo.setPower(-1);
                 }
                 
-                countdown_b = 5;
             }
             
-            if (countdown_b != 0) {
-                telemetry.addData("Status", "Cool: " + Integer.toString(countdown_b));
-                countdown_b -= 1;
-            }
+            telemetry.addData("Status", cont1Status);
+            telemetry.addData("Status", numBClicks);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Runtime: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }
+    
+    /* ALL OF THIS IS MIDDLE CODE TO CONNECT HIGH LEVEL TO LOW LEVEL
+    
+    private void move(int feet) {
+        double FEET_PER_NANOSECOND = 3 * 1000000;
+        
+        long startTime = System.nanoTime();
+        if (System.nanoTime() - startTime > 20 / FEET_PER_NANOSECOND) {
+            
+        }
+    }
+    
+    private void turnLeft() {
+        
+    }
+    
+    private void turnRight() {
+        
+    }
+    
+    public void autononomous() {
+        move(20);
+        turnLeft(10);
+        turnRight(3);
+    }*/
 }
-
-
-/** ****What is this?****
- * package org.firstinspires.ftc.teamcode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous ;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMo de;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
-@Autonomous(name = "Concept Scan Servo", group = "Concept")
-public class ConceptScanServo extends LinearOpMode {
-CRServo servo;
-public void runOpMode() {
-servo = hardwareMap.get(CRServo.class, "servo");
-waitForStart();
-while(opModeIsActive()){
-servo.setPower(1);
-sleep(1000);
-servo.setPower(-1);
-sleep(1000);
-servo.setPower(0);
-sleep(1000);
-}
-}
-}
-**/
