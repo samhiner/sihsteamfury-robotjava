@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous; //TODO is this necessary?
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled; //TODO is this necessary?
 
@@ -86,31 +86,6 @@ public class current extends LinearOpMode {
             telemetry.update();
         }
     }
-    
-    /* ALL OF THIS IS UNTESTED STRUCTURE FOR MIDDLE CODE TO CONNECT HIGH LEVEL TO LOW LEVEL
-    
-    private void move(int feet) {
-        double FEET_PER_NANOSECOND = 3 * 1000000;
-        
-        long startTime = System.nanoTime();
-        if (System.nanoTime() - startTime > 20 / FEET_PER_NANOSECOND) {
-            //WAIT can't we just use built in ElapsedTime instead of nanoTime()?
-        }
-    }
-    
-    private void turnLeft() {
-        
-    }
-    
-    private void turnRight() {
-        
-    }
-    
-    public void autononomous() {
-        move(20);
-        turnLeft(10);
-        turnRight(3);
-    }*/
 }
 
 public class ServoHandler {
