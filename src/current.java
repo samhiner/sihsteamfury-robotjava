@@ -23,6 +23,7 @@ public class current extends LinearOpMode {
     private DcMotor lbDrive;
     private DcMotor rfDrive;
     private DcMotor rbDrive;
+    private DcMotor vertLift;
     private Servo frontPlate;
 
     @Override
@@ -37,6 +38,7 @@ public class current extends LinearOpMode {
         lbDrive = hardwareMap.get(DcMotor.class, "lb");
         rfDrive = hardwareMap.get(DcMotor.class, "rf");
         rbDrive = hardwareMap.get(DcMotor.class, "rb");
+        vertLift = hardwareMap.get(DcMotor.class, "vert_lift");
         frontPlate = hardwareMap.get(Servo.class, "front_plate");
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -45,7 +47,7 @@ public class current extends LinearOpMode {
         lbDrive.setDirection(DcMotor.Direction.FORWARD);
         rfDrive.setDirection(DcMotor.Direction.REVERSE);
         rbDrive.setDirection(DcMotor.Direction.REVERSE);
-        
+
         int numAClicks = 0;
         int hinge1Status = 0;
         
@@ -63,30 +65,25 @@ public class current extends LinearOpMode {
             // Setup a variable for each drive wheel to save power level for telemetry
             double leftPower;
             double rightPower;
+            double vertLiftPower;
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
+            //temporarily borrowed from https://ftcforum.usfirst.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example
+            double r = Math.hypot(-gamepad1.left_stick_x, gamepad1.left_stick_y);
+            double robotAngle = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
+            double rightX = -gamepad1.right_stick_x;
+            final double v1 = r * Math.cos(robotAngle) + rightX;
+            final double v2 = r * Math.sin(robotAngle) - rightX;
+            final double v3 = r * Math.sin(robotAngle) + rightX;
+            final double v4 = r * Math.cos(robotAngle) - rightX;
+            
+            lfDrive.setPower(v1);
+            rfDrive.setPower(v2);
+            lbDrive.setPower(v3);
+            rbDrive.setPower(v4);
+            
+            vertLiftPower = Range.clip(gamepad2.right_stick_y, -1.0, 1.0);
+            vertLift.setPower(vertLiftPower);
 
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = gamepad1.left_stick_y;
-            double turn = -gamepad1.right_stick_x;
-            
-            if (turn != 0) {
-                leftPower = Range.clip(turn, -1.0, 1.0);
-                rightPower = Range.clip(-turn, -1.0, 1.0);
-            } else {
-                leftPower = Range.clip(drive, -1.0, 1.0);
-                rightPower = Range.clip(drive, -1.0, 1.0);
-            }
-            
-            lfDrive.setPower(leftPower);
-            lbDrive.setPower(leftPower);
-            rfDrive.setPower(rightPower);
-            rbDrive.setPower(rightPower);
-
-            /* A01: Untested code that should control a fixed servo based on controller2.a*/
-            
             if (gamepad2.a) {
                 aClickedState = true;
             }
@@ -110,12 +107,12 @@ public class current extends LinearOpMode {
         
             }
             
-            telemetry.addData("Main Hinge Number of Degrees / 180", hinge1Status);
-            telemetry.addData("Number of A Clicks", numAClicks);
+            telemetry.addData("Current Position", vertLiftPower);
+            telemetry.addData("Plate Up/Down", hinge1Status);
+            telemetry.addData("Number of A-Button Clicks", numAClicks);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Runtime: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }
